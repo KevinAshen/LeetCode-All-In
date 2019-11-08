@@ -1544,25 +1544,145 @@ public:
 
 - 对于这个上边界还是有点问题
 
-# XXX. SSSS
+# 862. 和至少为K的最短子数组
 
 ## 题目
+
+返回 A 的最短的非空连续子数组的长度，该子数组的和至少为 K 。
+
+如果没有和至少为 K 的非空子数组，返回 -1 。
+
+ 
+
+示例 1：
+
+输入：A = [1], K = 1
+输出：1
+示例 2：
+
+输入：A = [1,2], K = 4
+输出：-1
+示例 3：
+
+输入：A = [2,-1,2], K = 3
+输出：3
+
+
+提示：
+
+1 <= A.length <= 50000
+-10 ^ 5 <= A[i] <= 10 ^ 5
+1 <= K <= 10 ^ 9
+
 ## 参考文章
-- []()
+- [LeetCode\] 862. Shortest Subarray with Sum at Least K 和至少为K的最短子数组](https://www.cnblogs.com/grandyang/p/11300071.html)
+
 ***
 ## 题解
 ### 我的题解
-```c++
 
+```c++
+#include <iostream>
+#include <vector>
+#include <deque>
+
+using namespace std;
+
+class Solution {
+public:
+	int shortestSubarray(vector<int>& A, int K) {
+		int n = A.size(), res = INT_MAX;
+		deque<int> dq;
+		vector<int> sums(n + 1);
+		for (int i = 1; i <= n; ++i) sums[i] = sums[i - 1] + A[i - 1];
+		//打印nums的内容
+		for (int i = 0; i < sums.size(); i++) {
+			cout << "sums[" << i << "] :"  << sums[i] << '\t';
+		}
+		cout << "\n";
+		for (int i = 0; i <= n; ++i) {
+			cout << "当前的i是:" << i << endl;
+			cout << "NO1 打印DP START:" << endl;
+			//打印deque的内容
+			for (int i = 0; i < dq.size(); i++) {
+				cout << "dq[" << i << "] :"  << dq[i] << '\t';
+			}
+			cout << "\n";
+			cout << "NO1 打印DP END:" << endl;
+
+			while (!dq.empty() && sums[i] - sums[dq.front()] >= K) {
+				cout << "NO2 打印DP START:" << endl;
+				//打印deque的内容
+				for (int i = 0; i < dq.size(); i++) {
+					cout << "dq[" << i << "] :"  << dq[i] << '\t';
+				}
+				cout << "\n";
+				cout << "NO2 打印DP END:" << endl;
+				cout << "OLD res:" << res << endl;
+				res = min(res, i - dq.front());
+				cout << "NEW res:" << res << endl;
+				dq.pop_front();
+			}
+			while (!dq.empty() && sums[i] <= sums[dq.back()]) {
+				cout << "NO3 打印DP START:" << endl;
+				//打印deque的内容
+				for (int i = 0; i < dq.size(); i++) {
+					cout << "dq[" << i << "] :"  << dq[i] << '\t';
+				}
+				cout << "\n";
+				cout << "NO3 打印DP END:" << endl;
+				dq.pop_back();
+			}
+			cout << "NO4 打印DP START:" << endl;
+			//打印deque的内容
+			for (int i = 0; i < dq.size(); i++) {
+				cout << "dq[" << i << "] :"  << dq[i] << '\t';
+			}
+			cout << "\n";
+			cout << "NO4 打印DP END:" << endl;
+			dq.push_back(i);
+		}
+		return res == INT_MAX ? -1 : res;
+	}
+};
+int main(int argc, char *argv[]) {
+	Solution f;
+	vector<int> arr = {168};
+	int res = f.shortestSubarray(arr, 167);
+	cout << res << endl;
+}
 ```
 
 ***
 ### 参考题解
-```c++
 
+```c++
+class Solution {
+public:
+    int shortestSubarray(vector<int>& A, int K) {
+        int n = A.size(), res = INT_MAX;
+        deque<int> dq;
+        vector<int> sums(n + 1);
+        for (int i = 1; i <= n; ++i) sums[i] = sums[i - 1] + A[i - 1];
+        for (int i = 0; i <= n; ++i) {
+            while (!dq.empty() && sums[i] - sums[dq.front()] >= K) {
+                res = min(res, i - dq.front());
+                dq.pop_front();
+            }
+            while (!dq.empty() && sums[i] <= sums[dq.back()]) {
+                dq.pop_back();
+            }
+            dq.push_back(i);
+        }
+        return res == INT_MAX ? -1 : res;
+    }
+};
 ```
 ## 反思
 
+- 大神的做法妙是真的妙，难懂也是真的难懂
+- 可以看官方题解的解释[和至少为K的最短子数组](https://leetcode-cn.com/problems/shortest-subarray\-with-sum-at-least-k/solution/he-zhi-shao-wei-k-de-zui-duan-zi-shu-zu-by-leetcod/)
+- 关键是要理解我们的队列里面存放的到底是什么，其实存放的是我们结果子数组的左首，遍历到的i才是右首，队列里要保证的是能放进去的，作为小于K的子数组
 
 # XXX. SSSS
 
